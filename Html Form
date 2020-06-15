@@ -1,0 +1,75 @@
+<!--respond-modal-->
+                            <div class="modal fade" id="respond-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                <div class="modal-container" role="document">
+                                    <div class="modal-content">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <div class="modal-body">
+                                            <h3>Откликнуться</h3>
+                                            <form action="" method="post" class="contact-form" id="respondForm">
+                                                <fieldset>
+                                                    <input type="text" name="special-text" />
+                                                    <input type="hidden" name="csrf" value="eaca6f987e00c217d3e8bb69892ed958">
+                                                    <div class="form-group form-group-action">
+                                                        <label for="name">Имя</label>
+                                                        <input type="text" name="name" required="required" class="form-control" value="">
+                                                    </div>
+                                                    <div class="form-group form-group-action">
+                                                        <label for="email">E-mail</label>
+                                                        <input type="email" name="email" required="required" class="form-control" value="">
+                                                    </div>
+                                                    <div class="form-group form-group-action">
+                                                        <label for="phone">Телефон</label>
+                                                        <input type="text" name="phone" class="form-control" value="">
+                                                    </div>
+                                                    <div class="form-group form-group-action textarea-form-group">
+                                                        <label for="about">Коротко о себе</label>
+                                                        <textarea name="about" class="form-control"></textarea>
+                                                    </div>
+
+                                                    <p style="margin: 0;">Прикрепить резюме:</p>
+                                                    <input type="file" name="file">        
+                                                    <input type="submit" style="display: none;"/>
+                                                    <button class="btn btn-default" type="button" onclick="$(this).parent().find('input[type=submit]').click(); return false;">Отправить</button>
+                                                </fieldset>
+                                            </form>
+                                            <script type="text/javascript">
+                                                $(function () {
+                                                    var busy = false;
+                                                    var respondFormHandler = function () {
+                                                        if (!busy) {
+                                                            var respondForm = $(this);
+                                                            var button = respondForm.find('button');
+
+                                                            respondForm.ajaxSubmit({
+                                                                beforeSend: function () {
+                                                                    busy = true;
+                                                                    button.html('Отправляю...');
+                                                                },
+                                                                url: '/respondAjax/',
+                                                                type: 'post',
+                                                                dataType: 'json',
+                                                                success: function (data) {
+                                                                    button.html('Отправить');
+                                                                    if (data.isValid) {
+                                                                        respondForm.parent().html('<h3>Ваше обращение отправлено.</h3>');
+                                                                    } else {
+                                                                        respondForm.replaceWith(data.respondFormHtml);
+                                                                        $('#respondForm').on('submit', respondFormHandler);
+                                                                        busy = false;
+                                                                    }
+                                                                },
+                                                                error: function () {
+                                                                    alert('Произошёл технический сбой. Попробуйте повторить позже.');
+                                                                }
+                                                            });
+                                                        }
+                                                        return false;
+                                                    };
+                                                    $('#respondForm').on('submit', respondFormHandler);
+                                                });
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                        <!--/respond-modal-->
